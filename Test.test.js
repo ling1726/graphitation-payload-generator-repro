@@ -28,7 +28,7 @@ const Test = () => {
     `,
     {}
   );
-  console.dir(data, { depth: 10 });
+  console.log("RELAY DATA", JSON.stringify(data, null, 2));
   return <div></div>;
 };
 
