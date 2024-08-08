@@ -1,11 +1,10 @@
 import React from "react";
 import { render, act } from "@testing-library/react";
-import { createMockEnvironment, MockPayloadGenerator } from "relay-test-utils";
+import { createMockEnvironment } from "relay-test-utils";
 import {
   graphql,
   RelayEnvironmentProvider,
   useLazyLoadQuery,
-  useFragment,
 } from "react-relay";
 import { generate as payloadGenerator } from "@graphitation/graphql-js-operation-payload-generator";
 import { schema } from "./buildSchema";
@@ -15,18 +14,15 @@ const Test = () => {
   const data = useLazyLoadQuery(
     graphql`
       query TestGraphitationQuery @relay_test_operation {
-        messageSlice_MessageSliceConnection(first: 1) {
-          edges {
-            node {
-              actorDisplayName
-              id
-              isRead
-              messagePreview
-              __typename
-              ...TestGraphitation_messageSliceItem
-              ... on MessageSlice_SampleMessageSliceItemExtended {
-                extendedField
-              }
+        fieldL1 {
+          name
+          fieldL2 {
+            name
+            ... on ExtendedConcreteTypeL2 {
+              extendedField
+            }
+            fieldL3 {
+              name
             }
           }
         }
@@ -34,25 +30,7 @@ const Test = () => {
     `,
     {}
   );
-  return (
-    <div>
-      <TestWithFragment
-        data={data.messageSlice_MessageSliceConnection.edges[0].node}
-      />
-    </div>
-  );
-};
-
-const TestWithFragment = ({ data }) => {
-  const { timestamp } = useFragment(
-    graphql`
-      fragment TestGraphitation_messageSliceItem on MessageSlice_MessageSliceItem {
-        timestamp
-      }
-    `,
-    data
-  );
-
+  console.dir(data, { depth: 10 });
   return <div></div>;
 };
 
@@ -81,20 +59,16 @@ describe("Test", () => {
             },
           },
           {
-            MessageSlice_SampleMessageSliceItemExtended(context) {
-              spyOnExtendedTypeResolver();
-
+            AbstractTypeL2() {
+              spyOnAbstractTypeResolver();
               return {
-                extendedField: "EXTENDED",
+                name: "ABSTRACT_TYPE_L2",
               };
             },
-
-            MessageSlice_MessageSliceItem(context) {
-              spyOnAbstractTypeResolver();
-
+            ExtendedConcreteTypeL2() {
+              spyOnExtendedTypeResolver();
               return {
-                actorDisplayName: "AUTHOR",
-                timestamp: "TIMESTAMP_FOO",
+                extendedField: "EXTENDED_FIELD",
               };
             },
           }

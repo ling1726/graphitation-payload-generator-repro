@@ -5,25 +5,22 @@ import {
   graphql,
   RelayEnvironmentProvider,
   useLazyLoadQuery,
-  useFragment
+  useFragment,
 } from "react-relay";
 
 const Test = () => {
   const data = useLazyLoadQuery(
     graphql`
       query TestQuery @relay_test_operation {
-        messageSlice_MessageSliceConnection(first: 1) {
-          edges {
-            node {
-              actorDisplayName
-              id
-              isRead
-              messagePreview
-              __typename
-              ...Test_messageSliceItem
-              ... on MessageSlice_SampleMessageSliceItemExtended {
-                extendedField
-              }
+        fieldL1 {
+          name
+          fieldL2 {
+            name
+            ... on ExtendedConcreteTypeL2 {
+              extendedField
+            }
+            fieldL3 {
+              name
             }
           }
         }
@@ -31,20 +28,8 @@ const Test = () => {
     `,
     {}
   );
-  return <div><TestWithFragment data={data.messageSlice_MessageSliceConnection.edges[0].node} /></div>;
-};
-
-const TestWithFragment = ({data}) => {
-  const { timestamp } = useFragment(
-    graphql`
-      fragment Test_messageSliceItem on MessageSlice_MessageSliceItem {
-        timestamp
-      }
-    `,
-    data
-  );
-
-  return <div></div>
+  console.dir(data, { depth: 10 });
+  return <div></div>;
 };
 
 describe("Test", () => {
@@ -63,20 +48,16 @@ describe("Test", () => {
     await act(async () => {
       environment.mock.resolveMostRecentOperation((operation) => {
         return MockPayloadGenerator.generate(operation, {
-          MessageSlice_SampleMessageSliceItemExtended() {
-            spyOnExtendedTypeResolver();
-
+          AbstractTypeL2() {
+            spyOnAbstractTypeResolver();
             return {
-              extendedField: "EXTENDED",
+                name: "ABSTRACT_TYPE_L2",
             };
           },
-
-          MessageSlice_MessageSliceItem() {
-            spyOnAbstractTypeResolver();
-
+          ExtendedConcreteTypeL2() {
+            spyOnExtendedTypeResolver();
             return {
-              actorDisplayName: "AUTHOR",
-              timestamp: "TIMESTAMP_FOO"
+              extendedField: "EXTENDED_FIELD",
             };
           },
         });

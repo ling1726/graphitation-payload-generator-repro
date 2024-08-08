@@ -1,101 +1,45 @@
 type Query {
-  """
-  Sample slice view data query
-  """
-  messageSlice_MessageSliceConnection(
-    first: Int!
-    after: String
-  ): MessageSlice_MessageSliceConnection!
-
-  field: AbstractTypeL1
+  fieldL1: AbstractTypeL1
 }
 
+"""
+Abstract Interfaces
+"""
 interface AbstractTypeL1 {
   name: String!
-  field: AbstractTypeL2
+  fieldL2: AbstractTypeL2
 }
 
 interface AbstractTypeL2 {
   name: String!
-  field: AbstractTypeL3
+  fieldL3: AbstractTypeL3
 }
 
 interface AbstractTypeL3 {
   name: String!
 }
 
-"""
-WIP slices view data interfaces
-"""
-interface MessageSlice_MessageSliceConnection {
-  edges: [MessageSlice_MessageSliceEdge!]!
-}
-
-interface MessageSlice_MessageSliceEdge {
-  cursor: String!
-  node: MessageSlice_MessageSliceItem!
-}
-
-interface MessageSlice_MessageSliceItemSupportedAction {
-  type: String
-  isDivided: Boolean
-  displayText: String
-}
-
-interface MessageSlice_MessageSliceItemLocationLine {
-  content: String!
-  ignoreInSearch: Boolean
-}
-
-interface MessageSlice_MessageSliceItem {
-  actorDisplayName: String
-  id: ID!
-  isRead: Boolean!
-  location: [MessageSlice_MessageSliceItemLocationLine!]!
-  messagePreview: String
-  supportedActions: [MessageSlice_MessageSliceItemSupportedAction!]!
-  timestamp: String
-}
 
 """
-Sample implementations for slice view data interfaces
+Concrete implementations
 """
-type MessageSlice_SampleMessageSliceItemExtended implements MessageSlice_MessageSliceItem  {
-  actorDisplayName: String
-  id: ID!
-  isRead: Boolean!
-  location: [MessageSlice_SampleMessageSliceItemLocationLine!]!
-  messagePreview: String
-  supportedActions: [MessageSlice_SampleMessageSliceItemSupportedAction!]!
-  timestamp: String
-  extendedField: String
+type ConcreteTypeL1 implements AbstractTypeL1 {
+  name: String!
+  fieldL2: ConcreteTypeL2
 }
 
-type MessageSlice_SampleMessageSliceConnection implements MessageSlice_MessageSliceConnection {
-  edges: [MessageSlice_SampleMessageSliceEdge!]!
-  cursor: String
-  endCursor: String
-  direction: String
+type ConcreteTypeL2 implements AbstractTypeL2 {
+  name: String!
+  fieldL3: ConcreteTypeL3
 }
-type MessageSlice_SampleMessageSliceEdge implements MessageSlice_MessageSliceEdge {
-  cursor: String!
-  node: MessageSlice_SampleMessageSliceItem!
+
+type ConcreteTypeL3 implements AbstractTypeL3 {
+  name: String!
 }
-type MessageSlice_SampleMessageSliceItemSupportedAction implements MessageSlice_MessageSliceItemSupportedAction {
-  type: String
-  isDivided: Boolean
-  displayText: String
+
+type ExtendedConcreteTypeL2 implements AbstractTypeL2 {
+  name: String!
+  extendedField: String!
+  fieldL3: ConcreteTypeL3
 }
-type MessageSlice_SampleMessageSliceItemLocationLine implements MessageSlice_MessageSliceItemLocationLine {
-  content: String!
-  ignoreInSearch: Boolean
-}
-type MessageSlice_SampleMessageSliceItem implements MessageSlice_MessageSliceItem{
-  actorDisplayName: String
-  id: ID!
-  isRead: Boolean!
-  location: [MessageSlice_SampleMessageSliceItemLocationLine!]!
-  messagePreview: String
-  supportedActions: [MessageSlice_SampleMessageSliceItemSupportedAction!]!
-  timestamp: String
-}
+
